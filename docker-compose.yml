@@ -24,7 +24,7 @@ services:
     volumes:
       - .:/workspace          # .sif is written here, back to your project dir
     working_dir: /workspace
-    command: apptainer build snakemake-starter-pipeline.sif docker-archive:snakemake-starter-pipeline.tar
+    command: apptainer build --force snakemake-starter-pipeline.sif docker-archive:snakemake-starter-pipeline.tar
     profiles: ["apptainer"]
 
   # Run step: executes the pipeline using the .sif built above
@@ -32,11 +32,17 @@ services:
     image: ghcr.io/apptainer/apptainer:latest
     privileged: true
     volumes:
-      - ./data:/pipeline/data:ro
-      - ./results:/pipeline/results
-      - ./.snakemake:/pipeline/.snakemake   # writable; .sif filesystem is read-only
+      # Mount at neutral paths so Apptainer's squashfs overlay of /pipeline
+      # doesn't shadow them. Apptainer --bind then maps them into the right
+      # locations inside the .sif.
+      - ./data:/mnt/data:ro
+      - ./results:/mnt/results
+      - ./.snakemake:/mnt/snakemake
       - ./snakemake-starter-pipeline.sif:/pipeline.sif:ro
     command: apptainer run
       --pwd /pipeline
-      /pipeline.sif --cores 4
+      --bind /mnt/data:/pipeline/data
+      --bind /mnt/results:/pipeline/results
+      --bind /mnt/snakemake:/pipeline/.sn
+    
     profiles: ["apptainer"]
