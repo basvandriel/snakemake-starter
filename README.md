@@ -42,28 +42,6 @@ make apptainer-build-local   # build .sif only
 make apptainer-run-local     # run pipeline using existing .sif
 ```
 
-On the actual cluster, copy the `.sif` across and submit:
-
-```bash
-qsub -cwd -V -j y -o logs/pipeline.log run_pipeline.sh
-```
-
-`run_pipeline.sh`:
-
-```bash
-#!/usr/bin/env bash
-#$ -N snakemake-pipeline
-#$ -pe smp 4
-
-apptainer exec \
-    --pwd /pipeline \
-    --bind "$PWD/data:/pipeline/data" \
-    --bind "$PWD/results:/pipeline/results" \
-    --bind "$PWD/.snakemake:/pipeline/.snakemake" \
-    snakemake-starter-pipeline.sif \
-    snakemake --cores "$NSLOTS"
-```
-
 ## Output
 
 - `results/mapped/{sample}.bam` — sorted BAM files
