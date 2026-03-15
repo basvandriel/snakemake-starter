@@ -1,0 +1,14 @@
+[project]
+name = "snakemake-starter"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "snakemake>=9.7.1",
+    "jinja2",
+    "matplotlib",
+    "graphviz",
+    "pygments",
+    "pysam>=0.22",
+]

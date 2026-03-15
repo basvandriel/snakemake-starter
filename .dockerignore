@@ -1,0 +1,7 @@
+.git
+.venv
+.snakemake
+results/
+__pycache__
+*.pyc
+*.tar.gz

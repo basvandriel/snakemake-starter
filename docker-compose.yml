@@ -1,0 +1,9 @@
+services:
+  dev:
+    build: .
+    volumes:
+      - ./data:/pipeline/data:ro
+      - ./results:/pipeline/results
+      - ./Snakefile:/pipeline/Snakefile:ro   # live-reload rules without rebuild
+    command: ["--cores", "4", "--rerun-incomplete"]
+    profiles: ["dev"]
