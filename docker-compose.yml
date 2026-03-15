@@ -1,9 +1,42 @@
 services:
-  dev:
+  # ── deployed / CI ────────────────────────────────────────────────────────────
+  pipeline:
     build: .
+    volumes:
+      - ./data:/pipeline/data:ro
+      - ./results:/pipeline/results
+
+  dev:
     volumes:
       - ./data:/pipeline/data:ro
       - ./results:/pipeline/results
       - ./Snakefile:/pipeline/Snakefile:ro   # live-reload rules without rebuild
     command: ["--cores", "4", "--rerun-incomplete"]
     profiles: ["dev"]
+
+  # ── Apptainer local testing (macOS-safe via privileged Docker) ───────────────
+  # Requires the image to be saved first: make docker-save
+  #
+  # Build step: converts the local .tar to a .sif and writes it back to ./
+  apptainer-build:
+    image: ghcr.io/apptainer/apptainer:latest
+    privileged: true
+    volumes:
+      - .:/workspace          # .sif is written here, back to your project dir
+    working_dir: /workspace
+    command: apptainer build snakemake-starter-pipeline.sif docker-archive:snakemake-starter-pipeline.tar
+    profiles: ["apptainer"]
+
+  # Run step: executes the pipeline using the .sif built above
+  apptainer-run:
+    image: ghcr.io/apptainer/apptainer:latest
+    privileged: true
+    volumes:
+      - ./data:/pipeline/data:ro
+      - ./results:/pipeline/results
+      - ./.snakemake:/pipeline/.snakemake   # writable; .sif filesystem is read-only
+      - ./snakemake-starter-pipeline.sif:/pipeline.sif:ro
+    command: apptainer run
+      --pwd /pipeline
+      /pipeline.sif --cores 4
+    profiles: ["apptainer"]

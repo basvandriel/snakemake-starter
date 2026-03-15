@@ -71,6 +71,66 @@ docker save snakemake-starter-pipeline | ssh user@host docker load
 
 ---
 
+### 4. Apptainer (HPC — Altair Grid Engine)
+
+[Apptainer](https://apptainer.org) (the Linux Foundation successor to Singularity) is the standard container runtime on HPC clusters because it doesn't require root.
+
+> **Apptainer only runs natively on Linux** — you can't install it on macOS. However, you can run it inside a **privileged Docker container** for local testing (Docker Desktop on macOS runs containers in a Linux VM, so the kernel requirements are met).
+
+> **Note:** Apptainer ships a `singularity` compatibility symlink, so clusters that haven't updated the module name yet will still work.
+
+#### Testing locally on macOS
+
+```bash
+make apptainer-test
+```
+
+This spins up `ghcr.io/apptainer/apptainer` with `--privileged`, pulls your image from GHCR, builds a `.sif`, and runs the pipeline — exactly as it would on the HPC cluster.
+
+#### On the actual HPC cluster
+
+Authenticate once:
+
+```bash
+echo $CR_PAT | docker login ghcr.io -u basvandriel --password-stdin
+```
+
+Then push:
+
+```bash
+make docker-push    # builds + tags + pushes to ghcr.io/basvandriel/snakemake-starter-pipeline:latest
+```
+
+Or just push to `main` — the GitHub Actions workflow ([.github/workflows/docker.yml](.github/workflows/docker.yml)) builds and pushes automatically.
+
+#### Step 2 — build the `.sif` on the HPC cluster
+
+```bash
+make apptainer-build
+# equivalent to: apptainer build snakemake-starter-pipeline.sif docker://ghcr.io/basvandriel/snakemake-starter-pipeline:latest
+```
+
+#### Step 3 — submit to Altair Grid Engine
+
+```bash
+qsub -cwd -V -j y -o logs/pipeline.log run_pipeline.sh
+```
+
+Where `run_pipeline.sh` contains:
+
+```bash
+#!/usr/bin/env bash
+#$ -N snakemake-pipeline
+#$ -pe smp 4
+
+apptainer run \
+    --bind "$PWD/data:/pipeline/data" \
+    --bind "$PWD/results:/pipeline/results" \
+    snakemake-starter-pipeline.sif --cores "$NSLOTS"
+```
+
+---
+
 ### Why not `snakemake/snakemake:stable`?
 
 There is an official Snakemake Docker image (`snakemake/snakemake:stable`). It bundles Snakemake together with a full **Conda/Mamba** stack, because the traditional way to manage per-rule tool dependencies in Snakemake is via `conda:` directives in each rule.

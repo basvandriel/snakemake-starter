@@ -13,3 +13,5 @@ results/
 .snakemake
 
 snakemake-tutorial-data.tar.gz
+*.sif
+snakemake-starter-pipeline.tar

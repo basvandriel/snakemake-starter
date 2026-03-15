@@ -5,3 +5,8 @@ results/
 __pycache__
 *.pyc
 *.tar.gz
+*.tar
+*.sif
+data/
+results/
+uv.lock

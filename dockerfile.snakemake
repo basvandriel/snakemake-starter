@@ -1,0 +1,37 @@
+FROM --platform=linux/arm64 ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PATH="/usr/local/go/bin:$PATH"
+
+# Build dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libseccomp-dev \
+    pkg-config \
+    squashfs-tools \
+    squashfuse \
+    fuse2fs \
+    fuse-overlayfs \
+    libfuse-dev \
+    fakeroot \
+    cryptsetup \
+    curl \
+    git \
+    wget \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Go (version must match go.mod minimum)
+ARG GO_VERSION=1.25.6
+RUN curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-arm64.tar.gz" \
+    | tar -C /usr/local -xz
+
+WORKDIR /build
+COPY . /build
+
+# Build and install Apptainer
+RUN ./mconfig --prefix=/usr/local && \
+    make -C builddir && \
+    make -C builddir install
+
+ENTRYPOINT ["/usr/local/bin/apptainer"]
