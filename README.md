@@ -2,6 +2,13 @@
 
 A minimal Snakemake pipeline: counts reads in FASTQ files and writes a simple TSV report.
 
+**Project layout:**
+
+- `workflow/` → Snakemake workflow (rules, scripts, notebooks, reports)
+- `config/` → configuration files (e.g., `config.yaml`, sample sheets)
+- `data/` → input data (FASTQ, reference)
+- `results/` → pipeline outputs (counts, variants, etc.)
+
 **Steps:** `count_reads.py` → per-sample TSV → merge into `results/counts.tsv`
 
 ## Prerequisites

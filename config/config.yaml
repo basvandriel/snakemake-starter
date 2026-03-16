@@ -1,0 +1,8 @@
+# Example Snakemake configuration file
+# Add your pipeline parameters here.
+# See https://snakemake.readthedocs.io/en/stable/snakefiles/configuration.html
+
+samples:
+  - A
+  - B
+  - C
