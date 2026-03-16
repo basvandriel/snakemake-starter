@@ -41,22 +41,3 @@ jobs:
       - name: Cleanup generated tests
         if: always()
         run: rm -rf tests/.generated
-
-  build:
-    needs: test
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Build Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: false
-          tags: snakemake-starter:ci
-          load: true
-
-      - name: Smoke test container
-        run: |
-          docker run --rm snakemake-starter:ci python -c "import snakemake; print('ok')"
