@@ -12,10 +12,47 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build and push
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+
+      - name: Install uv and dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install uv
+
+      - name: Sync dependencies (uv)
+        run: uv sync
+
+      - name: Run Snakemake lint
+        run: uv run snakemake --lint
+
+      - name: Generate unit tests
+        run: uv run snakemake --generate-unit-tests tests/.generated
+
+      - name: Run unit tests
+        run: uv run pytest -q tests/.generated
+
+      - name: Cleanup generated tests
+        if: always()
+        run: rm -rf tests/.generated
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
         uses: docker/build-push-action@v6
         with:
           context: .
           push: false
-          tags: workflow:latest
+          tags: snakemake-starter:ci
           load: true
+
+      - name: Smoke test container
+        run: |
+          docker run --rm snakemake-starter:ci python -c "import snakemake; print('ok')"
