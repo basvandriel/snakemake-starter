@@ -9,15 +9,21 @@ rule count_reads:
         "data/samples/{sample}.fastq",
     output:
         "results/counts/{sample}.tsv",
-    params:
-        sample="{sample}",
+    log:
+        "logs/count_reads/{sample}.log",
+    container:
+        "docker://python:3.12",
     shell:
-        "python scripts/count_reads.py {input} {output}"
+        "mkdir -p $(dirname {log}) && python scripts/count_reads.py {input} {output} > {log} 2>&1"
 
 rule merge_counts:
     input:
         expand("results/counts/{sample}.tsv", sample=SAMPLES),
     output:
         "results/counts.tsv",
+    log:
+        "logs/merge_counts.log",
+    container:
+        "docker://python:3.12",
     shell:
-        "cat {input} > {output}"
+        "mkdir -p $(dirname {log}) && cat {input} > {output} 2> {log}"

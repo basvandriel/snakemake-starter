@@ -16,3 +16,4 @@ snakemake-tutorial-data.tar.gz
 *.sif
 snakemake-starter-pipeline.tar
 tests/.generated
+logs/
