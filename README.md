@@ -1,8 +1,8 @@
 # snakemake-starter
 
-A minimal Snakemake pipeline: aligns FASTQ reads to a reference genome and calls variants.
+A minimal Snakemake pipeline: counts reads in FASTQ files and writes a simple TSV report.
 
-**Steps:** `bwa mem` → `samtools sort` → `samtools index` → `bcftools call`
+**Steps:** `count_reads.py` → per-sample TSV → merge into `results/counts.tsv`
 
 ## Prerequisites
 
@@ -33,23 +33,54 @@ make docker-build
 
 ### Apptainer (HPC / Altair Grid Engine)
 
-Apptainer only runs on Linux. On macOS, test it via a privileged Docker container:
+This project can run on a cluster using Apptainer (the modern Singularity).
+
+To avoid building the `.sif` on macOS or native on Windows (Apptainer is Linux-only), you can build and test locally via Docker:
 
 ```bash
-make apptainer-test          # build .sif + run pipeline
-make apptainer-build-local   # build .sif only
-make apptainer-run-local     # run pipeline using existing .sif
+make apptainer-test          # build .sif + run pipeline (macOS)
+make apptainer-build-local   # build .sif only (macOS)
+make apptainer-run-local     # run pipeline using existing .sif (macOS)
 ```
 
-## Output
+### Deploying to an HPC cluster (registry-based flow)
 
-- `results/mapped/{sample}.bam` — sorted BAM files
-- `results/mapped/{sample}.bam.bai` — BAM indices
-- `results/variants.vcf` — called variants
-
-## Visualise the DAG
+1) Build the Docker image locally:
 
 ```bash
-uv run snakemake --dag | dot -Tsvg > dag.svg   # needs: brew install graphviz
+make docker-build
 ```
 
+2) Push it to a registry (GHCR by default):
+
+```bash
+docker push <image>
+```
+
+3) On the cluster, build the `.sif` from the registry image:
+
+```bash
+apptainer build snakemake-starter-pipeline.sif docker://ghcr.io/basvandriel/snakemake-starter-pipeline:latest
+```
+
+4) Run the pipeline:
+
+```bash
+apptainer exec \
+  --pwd /pipeline \
+  --bind "$PWD/data:/pipeline/data" \
+  --bind "$PWD/results:/pipeline/results" \
+  --bind "$PWD/.snakemake:/pipeline/.snakemake" \
+  snakemake-starter-pipeline.sif \
+  snakemake --cores "$NSLOTS"
+```
+
+### High-level flow (registry-based)
+
+```mermaid
+flowchart LR
+  A[Local dev] -->|build & push| B[Registry]
+  B -->|pull| C[HPC cluster]
+  C -->|build .sif| D[Apptainer image]
+  D -->|run| E[Snakemake pipeline]
+```

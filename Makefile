@@ -16,11 +16,6 @@ docker-run:
 docker-dev:
 	docker compose --profile dev up dev
 
-# Tag and push to GHCR (run once: echo $CR_PAT | docker login ghcr.io -u USERNAME --password-stdin)
-docker-push: docker-build
-	docker tag $(IMAGE_NAME):$(IMAGE_TAG) $(REMOTE_IMAGE)
-	docker push $(REMOTE_IMAGE)
-
 # Save the Docker image to a local tar file (input for apptainer-build-local)
 docker-save: docker-build
 	docker save $(IMAGE_NAME):$(IMAGE_TAG) -o $(IMAGE_NAME).tar
