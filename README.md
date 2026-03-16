@@ -7,8 +7,7 @@ A minimal Snakemake pipeline: aligns FASTQ reads to a reference genome and calls
 ## Prerequisites
 
 ```bash
-brew install bwa samtools bcftools   # macOS
-uv sync                              # Python deps
+uv sync   # install Python deps
 ```
 
 ## Running

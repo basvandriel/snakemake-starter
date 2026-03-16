@@ -3,9 +3,6 @@ FROM ubuntu:24.04 AS base
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    bwa \
-    samtools \
-    bcftools \
     python3 \
     python3-pip \
     ca-certificates \

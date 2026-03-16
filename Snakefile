@@ -1,36 +1,23 @@
-SAMPLES = ["A", "B", "C"]
-
+SAMPLES = glob_wildcards("data/samples/{sample}.fastq").sample
 
 rule all:
     input:
-        "results/variants.vcf",
+        "results/counts.tsv",
 
-
-rule bwa_map:
+rule count_reads:
     input:
-        ref="data/genome.fa",
-        reads="data/samples/{sample}.fastq",
+        "data/samples/{sample}.fastq",
     output:
-        "results/mapped/{sample}.bam",
+        "results/counts/{sample}.tsv",
+    params:
+        sample="{sample}",
     shell:
-        "bwa mem {input.ref} {input.reads} | samtools sort -o {output}"
+        "python scripts/count_reads.py {input} {output}"
 
-
-rule samtools_index:
+rule merge_counts:
     input:
-        "results/mapped/{sample}.bam",
+        expand("results/counts/{sample}.tsv", sample=SAMPLES),
     output:
-        "results/mapped/{sample}.bam.bai",
+        "results/counts.tsv",
     shell:
-        "samtools index {input}"
-
-
-rule bcftools_call:
-    input:
-        ref="data/genome.fa",
-        bam=expand("results/mapped/{sample}.bam", sample=SAMPLES),
-        bai=expand("results/mapped/{sample}.bam.bai", sample=SAMPLES),
-    output:
-        "results/variants.vcf",
-    shell:
-        "bcftools mpileup -f {input.ref} {input.bam} | bcftools call -mv -o {output}"
+        "cat {input} > {output}"
