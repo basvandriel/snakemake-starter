@@ -30,7 +30,7 @@ jobs:
 
       # We can do this for now as the pipeline is lightweight
       - name: Run pipeline to produce reference outputs
-        run: uv run snakemake --cores 1
+        run: uv run snakemake --cores 1 --forceall
 
       - name: Generate unit tests
         run: uv run snakemake --generate-unit-tests tests/.generated
