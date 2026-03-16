@@ -11,4 +11,5 @@ dependencies = [
     "graphviz",
     "pygments",
     "pysam>=0.22",
+    "pytest>=9.0.2",
 ]
