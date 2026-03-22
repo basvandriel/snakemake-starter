@@ -14,15 +14,49 @@ A minimal Snakemake pipeline: counts reads in FASTQ files and writes a simple TS
 ## Prerequisites
 
 ```bash
-uv sync   # install Python deps
+make conda-env              # conda env create -f environment.yaml
+conda activate snakemake-starter
 ```
+
+> `environment.yaml` is the single source of truth for all dependencies — locally and in the production image.
+
+## Environment architecture
+
+| Layer | Tool | Owns |
+|-------|------|------|
+| Dev | conda / environment.yaml | Everything: Snakemake, bwa, samtools, pytest, … |
+| **Production** | **Dockerfile → .sif** | **environment.yaml baked in — single artefact** |
+
+### Why a single image, not per-rule conda environments?
+
+Per-rule `conda:` directives create isolated envs per rule, which is elegant in development but a problem in production:
+
+- Multiple envs must be created (or pre-built) on the target machine
+- conda must be installed on every cluster node
+- Each env is a separate deployment artefact to manage
+
+The fat-image approach bakes everything into one file:
+
+```
+Dockerfile
+  └── conda env update --name base --file environment.yaml   ← all tools here
+        └── docker build → snakemake-starter-pipeline.sif
+```
+
+On the cluster you run:
+
+```bash
+apptainer exec snakemake-starter-pipeline.sif snakemake --cores "$NSLOTS"
+```
+
+No `--use-conda`, no `--use-apptainer` per-rule pulls — every tool is already inside the `.sif`.
 
 ## Running
 
 ### Local (fastest for development)
 
 ```bash
-uv run snakemake --cores 4
+snakemake --cores 4
 ```
 
 ### Docker
@@ -32,7 +66,7 @@ make docker-run        # deployed — code baked into image
 make docker-dev        # dev — Snakefile live-mounted, edit rules without rebuilding
 ```
 
-Rebuild after changing `pyproject.toml`:
+Rebuild after changing `environment.yaml`:
 
 ```bash
 make docker-build

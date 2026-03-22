@@ -12,6 +12,10 @@ setup-linux:
 	tar --wildcards -xf snakemake-tutorial-data.tar.gz --strip 1 "*/data" "*/environment.yaml"
 	mv data resources
 
+# Create the conda environment for local bioinformatics tool access
+conda-env:
+	conda env create -f environment.yaml
+
 run:
 	uv run snakemake -s workflow/Snakefile --cores 1
 
@@ -40,4 +44,4 @@ apptainer-run-local:
 # Convenience: build .sif then run
 apptainer-test: apptainer-build-local apptainer-run-local
 
-.PHONY: setup-macos setup-linux run docker-build docker-run docker-dev docker-push docker-save apptainer-build apptainer-run apptainer-build-local apptainer-run-local apptainer-test
+.PHONY: setup-macos setup-linux conda-env run docker-build docker-run docker-dev docker-push docker-save apptainer-build apptainer-run apptainer-build-local apptainer-run-local apptainer-test

@@ -5,11 +5,6 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "snakemake>=9.7.1",
-    "jinja2",
-    "matplotlib",
-    "graphviz",
-    "pygments",
-    "pysam>=0.22",
-    "pytest>=9.0.2",
+    # All dependencies are managed by conda (environment.yaml).
+    # This file exists only to satisfy tooling that expects a pyproject.toml.
 ]

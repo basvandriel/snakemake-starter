@@ -2,6 +2,9 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
+  # Single source of truth for all dependencies — locally and in the production image.
+  # Locally: make conda-env && conda activate snakemake-starter
+  # Production: baked into the Docker image via mamba env update (see Dockerfile)
   - snakemake-minimal >=9.7.1
   - jinja2
   - matplotlib
@@ -11,3 +14,4 @@ dependencies:
   - bwa ~=0.7.17
   - pygments
   - pysam =0.22
+  - pytest >=9.0.2

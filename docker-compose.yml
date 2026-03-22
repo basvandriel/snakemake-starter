@@ -40,10 +40,11 @@ services:
       - ./results:/mnt/results
       - ./.snakemake:/mnt/snakemake
       - ./snakemake-starter-pipeline.sif:/pipeline.sif:ro
-    command: apptainer run
+    command: >-
+      apptainer run
       --pwd /pipeline
       --bind /mnt/data:/pipeline/data
       --bind /mnt/results:/pipeline/results
-      --bind /mnt/snakemake:/pipeline/.sn
-    
+      --bind /mnt/snakemake:/pipeline/.snakemake
+      /pipeline.sif
     profiles: ["apptainer"]
