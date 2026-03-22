@@ -7,5 +7,5 @@ rule merge_counts:
         "logs/merge_counts.log",
     container:
         "docker://python:3.12",
-    shell:
-        "mkdir -p $(dirname {log}) && cat {input} > {output} 2> {log}"
+    script:
+        "../scripts/merge_counts.py"

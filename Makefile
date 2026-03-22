@@ -12,8 +12,16 @@ setup-linux:
 	tar --wildcards -xf snakemake-tutorial-data.tar.gz --strip 1 "*/data" "*/environment.yaml"
 	mv data resources
 
+# Create the runtime conda environment
+conda-env:
+	conda env create -f environment.yaml --name snakemake-starter
+
+# Layer dev dependencies on top (pytest, etc.)
+conda-env-dev: conda-env
+	conda env update --name snakemake-starter -f environment-dev.yaml
+
 run:
-	uv run snakemake -s workflow/Snakefile --cores 1
+	snakemake -s workflow/Snakefile --cores 1
 
 # ── Docker ───────────────────────────────────────────────────────────────────
 docker-build:
@@ -40,4 +48,4 @@ apptainer-run-local:
 # Convenience: build .sif then run
 apptainer-test: apptainer-build-local apptainer-run-local
 
-.PHONY: setup-macos setup-linux run docker-build docker-run docker-dev docker-push docker-save apptainer-build apptainer-run apptainer-build-local apptainer-run-local apptainer-test
+.PHONY: setup-macos setup-linux conda-env run docker-build docker-run docker-dev docker-push docker-save apptainer-build apptainer-run apptainer-build-local apptainer-run-local apptainer-test

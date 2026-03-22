@@ -1,4 +1,6 @@
-SAMPLES = glob_wildcards("resources/samples/{sample}.fastq").sample
+configfile: "config/config.yaml"
+
+SAMPLES = config["samples"]
 
 rule all:
     input:

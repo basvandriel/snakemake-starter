@@ -5,11 +5,5 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "snakemake>=9.7.1",
-    "jinja2",
-    "matplotlib",
-    "graphviz",
-    "pygments",
-    "pysam>=0.22",
-    "pytest>=9.0.2",
+    # Dependencies are managed by conda (environment.yaml).
 ]
