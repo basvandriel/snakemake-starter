@@ -7,6 +7,6 @@ __pycache__
 *.tar.gz
 *.tar
 *.sif
-data/
+resources/
 results/
 uv.lock

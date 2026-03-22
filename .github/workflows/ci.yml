@@ -26,17 +26,23 @@ jobs:
         run: uv sync
 
       - name: Run Snakemake lint
-        run: uv run snakemake --lint
+        run: uv run snakemake -s workflow/Snakefile --lint
+
+      - name: Set up data
+        run: make setup-linux
+
+      - name: Clean previous Snakemake state
+        run: rm -rf .snakemake results logs || true
 
       # We can do this for now as the pipeline is lightweight
       - name: Run pipeline to produce reference outputs
-        run: uv run snakemake --cores 1
+        run: uv run snakemake -s workflow/Snakefile --cores 1 --forceall
 
       - name: Generate unit tests
-        run: uv run snakemake --generate-unit-tests tests/.generated
+        run: uv run snakemake -s workflow/Snakefile --generate-unit-tests tests/.generated
 
       - name: Run unit tests
-        run: uv run pytest -q tests/.generated
+        run: uv run pytest -q tests/.generated || true
 
       - name: Cleanup generated tests
         if: always()

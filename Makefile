@@ -2,9 +2,18 @@ IMAGE_NAME  := snakemake-starter-pipeline
 IMAGE_TAG   := latest
 SIF         := $(IMAGE_NAME).sif
 
-setup:
+setup-macos:
 	curl -L https://api.github.com/repos/snakemake/snakemake-tutorial-data/tarball -o snakemake-tutorial-data.tar.gz
 	tar -xf snakemake-tutorial-data.tar.gz --strip 1 "*/data" "*/environment.yaml"
+	mv data resources
+
+setup-linux:
+	curl -L https://api.github.com/repos/snakemake/snakemake-tutorial-data/tarball -o snakemake-tutorial-data.tar.gz
+	tar --wildcards -xf snakemake-tutorial-data.tar.gz --strip 1 "*/data" "*/environment.yaml"
+	mv data resources
+
+run:
+	uv run snakemake -s workflow/Snakefile --cores 1
 
 # ── Docker ───────────────────────────────────────────────────────────────────
 docker-build:
@@ -31,4 +40,4 @@ apptainer-run-local:
 # Convenience: build .sif then run
 apptainer-test: apptainer-build-local apptainer-run-local
 
-.PHONY: setup docker-build docker-run docker-dev docker-push docker-save apptainer-build apptainer-run apptainer-build-local apptainer-run-local apptainer-test
+.PHONY: setup-macos setup-linux run docker-build docker-run docker-dev docker-push docker-save apptainer-build apptainer-run apptainer-build-local apptainer-run-local apptainer-test

@@ -1,0 +1,8 @@
+SAMPLES = glob_wildcards("resources/samples/{sample}.fastq").sample
+
+rule all:
+    input:
+        "results/counts.tsv",
+
+include: "rules/count_reads.smk"
+include: "rules/merge_counts.smk"

@@ -15,5 +15,5 @@ RUN pip install --no-cache-dir --break-system-packages .
 
 COPY . .
 
-ENTRYPOINT ["snakemake"]
+ENTRYPOINT ["snakemake", "-s", "workflow/Snakefile"]
 CMD ["--cores", "4"]
