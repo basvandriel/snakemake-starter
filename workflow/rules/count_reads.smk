@@ -1,6 +1,6 @@
 rule count_reads:
     input:
-        "data/samples/{sample}.fastq",
+        "resources/samples/{sample}.fastq",
     output:
         "results/counts/{sample}.tsv",
     log:
