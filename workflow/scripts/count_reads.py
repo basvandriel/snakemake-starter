@@ -36,9 +36,3 @@ else:
         print("Usage: python scripts/count_reads.py <input.fastq> <output.tsv>")
         sys.exit(1)
     count_reads(sys.argv[1], sys.argv[2])
-
-        f.write(f"{sample}\t{reads}\n")
-
-
-if __name__ == "__main__":
-    main()
