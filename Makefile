@@ -9,6 +9,10 @@ setup-macos:
 setup-linux:
 	curl -L https://api.github.com/repos/snakemake/snakemake-tutorial-data/tarball -o snakemake-tutorial-data.tar.gz
 	tar --wildcards -xf snakemake-tutorial-data.tar.gz --strip 1 "*/data" "*/environment.yaml"
+
+run:
+	uv run snakemake -s workflow/Snakefile --cores 1
+
 # ── Docker ───────────────────────────────────────────────────────────────────
 docker-build:
 	docker compose build
@@ -34,4 +38,4 @@ apptainer-run-local:
 # Convenience: build .sif then run
 apptainer-test: apptainer-build-local apptainer-run-local
 
-.PHONY: setup docker-build docker-run docker-dev docker-push docker-save apptainer-build apptainer-run apptainer-build-local apptainer-run-local apptainer-test
+.PHONY: setup-macos setup-linux run docker-build docker-run docker-dev docker-push docker-save apptainer-build apptainer-run apptainer-build-local apptainer-run-local apptainer-test
