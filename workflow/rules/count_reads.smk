@@ -7,5 +7,5 @@ rule count_reads:
         "logs/count_reads/{sample}.log",
     container:
         "docker://python:3.12",
-    shell:
-        "mkdir -p $(dirname {log}) && python workflow/scripts/count_reads.py {input} {output} > {log} 2>&1"
+    script:
+        "../scripts/count_reads.py"
