@@ -47,3 +47,24 @@ jobs:
       - name: Cleanup generated tests
         if: always()
         run: rm -rf tests/.generated
+
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up data
+        run: make setup-linux
+
+      - name: Build image
+        run: docker compose build pipeline
+
+      - name: Run pipeline in Docker
+        run: |
+          mkdir -p results
+          docker compose run --rm pipeline --cores 1 --forceall
+
+      - name: Verify output exists
+        run: test -f results/counts.tsv && echo "counts.tsv present" || (echo "counts.tsv missing" && exit 1)
+
