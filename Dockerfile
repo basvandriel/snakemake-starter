@@ -4,8 +4,8 @@ WORKDIR /pipeline
 
 # Bake all tools into the image. Single source of truth: environment.yaml.
 COPY environment.yaml ./
-RUN mamba env update --name base --file environment.yaml \
-    && mamba clean -afy
+RUN micromamba install -n snakemake -f environment.yaml -y \
+    && micromamba clean -afy
 
 COPY . .
 
