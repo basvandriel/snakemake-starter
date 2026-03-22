@@ -28,6 +28,9 @@ jobs:
       - name: Run Snakemake lint
         run: uv run snakemake --lint
 
+      - name: Clean previous Snakemake state
+        run: rm -rf .snakemake results logs || true
+
       # We can do this for now as the pipeline is lightweight
       - name: Run pipeline to produce reference outputs
         run: uv run snakemake --cores 1 --forceall
