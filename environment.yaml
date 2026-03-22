@@ -2,11 +2,7 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  # runtime
   - snakemake-minimal >=9.7.1
   - jinja2
   - graphviz
   - pygments
-
-  # dev
-  - pytest >=9.0.2

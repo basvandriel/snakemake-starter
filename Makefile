@@ -12,9 +12,13 @@ setup-linux:
 	tar --wildcards -xf snakemake-tutorial-data.tar.gz --strip 1 "*/data" "*/environment.yaml"
 	mv data resources
 
-# Create the conda environment (all tools + Python packages)
+# Create the runtime conda environment
 conda-env:
 	conda env create -f environment.yaml --name snakemake-starter
+
+# Layer dev dependencies on top (pytest, etc.)
+conda-env-dev: conda-env
+	conda env update --name snakemake-starter -f environment-dev.yaml
 
 run:
 	snakemake -s workflow/Snakefile --cores 1
