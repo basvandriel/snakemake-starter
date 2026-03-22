@@ -29,7 +29,7 @@ jobs:
         run: uv run snakemake --lint
 
       - name: Set up data
-        run: make setup
+        run: make setup-linux
 
       - name: Clean previous Snakemake state
         run: rm -rf .snakemake results logs || true

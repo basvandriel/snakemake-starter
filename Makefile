@@ -2,10 +2,13 @@ IMAGE_NAME  := snakemake-starter-pipeline
 IMAGE_TAG   := latest
 SIF         := $(IMAGE_NAME).sif
 
-setup:
+setup-macos:
 	curl -L https://api.github.com/repos/snakemake/snakemake-tutorial-data/tarball -o snakemake-tutorial-data.tar.gz
 	tar -xf snakemake-tutorial-data.tar.gz --strip 1 "*/data" "*/environment.yaml"
 
+setup-linux:
+	curl -L https://api.github.com/repos/snakemake/snakemake-tutorial-data/tarball -o snakemake-tutorial-data.tar.gz
+	tar --wildcards -xf snakemake-tutorial-data.tar.gz --strip 1 "*/data" "*/environment.yaml"
 # ── Docker ───────────────────────────────────────────────────────────────────
 docker-build:
 	docker compose build
