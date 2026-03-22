@@ -14,11 +14,9 @@ A minimal Snakemake pipeline: counts reads in FASTQ files and writes a simple TS
 ## Prerequisites
 
 ```bash
-make conda-env              # conda env create -f environment.yaml
+make conda-env
 conda activate snakemake-starter
 ```
-
-> `environment.yaml` is the single source of truth for all dependencies — locally and in the production image.
 
 ## Environment architecture
 

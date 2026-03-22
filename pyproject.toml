@@ -5,6 +5,5 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    # All dependencies are managed by conda (environment.yaml).
-    # This file exists only to satisfy tooling that expects a pyproject.toml.
+    # Dependencies are managed by conda (environment.yaml).
 ]

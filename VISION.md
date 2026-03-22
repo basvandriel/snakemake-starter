@@ -33,7 +33,7 @@ No `--use-conda`, no `--use-apptainer` per-rule pulls, no internet access requir
 | Dev | conda + environment.yaml | Everything: Snakemake, bwa, samtools, pytest, … |
 | Production | Dockerfile → .sif | environment.yaml baked in — one file on the cluster |
 
-`environment.yaml` is the single source of truth. There is no separate Python package manager — conda handles both the bioinformatics binaries and the Python packages, which avoids duplication and the confusion of two tools managing overlapping dependency sets.
+`environment.yaml` is the single source of truth for all dependencies. conda handles both the bioinformatics binaries and the Python packages.
 
 ## Why `snakemake/snakemake` as base image?
 

@@ -12,12 +12,12 @@ setup-linux:
 	tar --wildcards -xf snakemake-tutorial-data.tar.gz --strip 1 "*/data" "*/environment.yaml"
 	mv data resources
 
-# Create the conda environment for local bioinformatics tool access
+# Create the conda environment (all tools + Python packages)
 conda-env:
-	conda env create -f environment.yaml
+	conda env create -f environment.yaml --name snakemake-starter
 
 run:
-	uv run snakemake -s workflow/Snakefile --cores 1
+	snakemake -s workflow/Snakefile --cores 1
 
 # ── Docker ───────────────────────────────────────────────────────────────────
 docker-build:
