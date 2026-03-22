@@ -13,7 +13,7 @@ jobs:
         shell: bash -el {0}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up conda environment
         uses: conda-incubator/setup-miniconda@v3
@@ -41,7 +41,7 @@ jobs:
       - name: Generate unit tests
         run: snakemake -s workflow/Snakefile --generate-unit-tests tests/.generated
 
-      - name: Run unit tests
+      - name: Run generated unit tests
         run: pytest -q tests/.generated || true
 
       - name: Cleanup generated tests
